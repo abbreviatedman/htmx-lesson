@@ -1,0 +1,22 @@
+[
+    {
+        "text": "Buy groceries",
+        "isComplete": false
+    },
+    {
+        "text": "Finish homework",
+        "isComplete": true
+    },
+    {
+        "text": "Call mom",
+        "isComplete": false
+    },
+    {
+        "text": "Clean the house",
+        "isComplete": false
+    },
+    {
+        "text": "Read a book",
+        "isComplete": true
+    }
+]

@@ -1,0 +1,25 @@
+<div id="todo-container-<%= todo._id %>" class="todo-item <%= todo.isComplete ? 'completed' : '' %>">
+  <span
+    hx-put="/toggle/<%= todo._id%>"
+    hx-target="#todo-container-<%= todo._id %>"
+    hx-swap="outerHTML"
+  >
+    <%= todo.text %>
+  </span>
+    <div>
+      <button
+        hx-get="/edit-text/<%= todo._id %>"
+        hx-target="#todo-container-<%= todo._id %>"
+        hx-swap="outerHTML"
+      >
+        Edit
+      </button>
+      <button
+        hx-delete="/delete/<%= todo._id %>"
+        hx-target="#todo-container-<%= todo._id %>"
+        hx-swap="outerHTML"
+      >
+        Delete
+      </button>
+    </div>
+</div>

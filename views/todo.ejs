@@ -1,0 +1,13 @@
+<div id="todo-container-<%= todo._id %>" class="todo-item <%= todo.isComplete ? 'completed' : '' %>">
+  <span>
+    <%= todo.text %>
+  </span>
+  <div>
+    <button>
+      Edit
+    </button>
+    <button>
+      Delete
+    </button>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+<form hx-put="/update-text/<%= todo._id %>" hx-swap="outerHTML">
+  <input type="text" name="text" value="<%= todo.text %>" required>
+  <button type="submit">Save</button>
+</form>
