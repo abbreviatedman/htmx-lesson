@@ -15,7 +15,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const logger = require("morgan");
 
-const todosRouter = require("./routes/todosRouter");
 const viewsRouter = require("./routes/viewsRouter");
 const connectToMongoDb = require("./database/connectToMongoDb");
 
@@ -28,7 +27,6 @@ app.use(express.static("public"));
 app.use(logger("dev"));
 
 app.use("/", viewsRouter);
-app.use("/api", todosRouter);
 
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
@@ -36,7 +34,7 @@ app.listen(3000, () => {
 });
 ```
 
-As you can see, we have a simple Express app set up to serve EJS templates and the setup for an API for managing todos. We also have a MongoDB database connection function set up for us.
+As you can see, we have a simple Express app set up to serve EJS templates. We also have a MongoDB database connection function set up for us.
 
 Here's our Todo model:
 
@@ -124,4 +122,52 @@ Before we can really get going, we need data to work with.
 - Go to Compass and create a new database called `htmx-todo-app` with a `todos` collection.
 - Now grab your connection string and save it to a `.env` file as a value for the `MONGODB_URI` environment variable.
 - At the end of the connection string, where it ends with `.net/`, add the database to connect to: `htmx-todo-app`
+- Add the JSON data from `models/todos.json` to your `todos` collection in Compass.
 - Start or restart your server to see if you get a "MongoDB connected..." message.
+
+### Looking At The Final Version
+
+Now that we have the data working, let's take a look at the final version of the app.
+
+Change the import of the `viewsRouter` in `index.js` to `viewsRouterFinal`:
+
+```js
+const viewsRouter = require("./routes/viewsRouterFinal");
+```
+
+Now run the server and go to `http://localhost:3000` to see the final version of the app. Let's try out all the features.
+
+As you're doing so, note that the page doesn't reload when you add, delete, or edit a todo. This is because HTMX is handling the requests and responses in the browser, and it's not rendering new pages, but, rather, updating the existing one.
+
+Try the following out:
+
+- Add a new todo by filling out the form at the top.
+- Toggle a todo from complete and back by clicking on it.
+- Edit a todo by clicking the "Edit" button and changing the text.
+- Delete a todo by clicking the "Delete" button.
+
+Check compass afterwards to see if the changes you made in the app are reflected in the database. If you wish, you can reset the data by deleting all the todos in Compass and adding the JSON data from `todos.json` again.
+
+When you're done, **don't forget** to change the import back to `viewsRouter` in `index.js`.
+
+### Rendering Our Todos
+
+Currently, our `viewRouter.js` file has only one route, and it's incomplete:
+
+``` js
+router.get("/", async (req, res) => {
+  res.render("index", { todos: [] });
+});
+```
+
+As you can see, we're rendering the `index` view with an empty array of todos. We need to fetch the todos from the database and use EJS to render them to the page.
+
+Let's update the route to fetch the todos from the database and render them to the page:
+
+``` js
+router.get("/", async (req, res) => {
+  const todos = await Todo.find({});
+  res.render("index", { todos });
+});
+```
+
