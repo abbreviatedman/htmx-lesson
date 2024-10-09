@@ -1,46 +1,47 @@
-const express = require('express');
+const express = require("express");
 
-const {
-  getTodos,
-  createTodo,
-  toggleTodo,
-  updateText,
-  deleteTodo,
-} = require('../controllers/todosController')
+const Todo = require("../models/Todo");
 
 const router = express.Router();
 
 router.get("/", async (_, res) => {
-  const todos = await getTodos();
-  res.render("index", { todos: todos });
+  const todos = await Todo.find({});
+  res.render("indexFinal", { todos: todos });
 });
 
 router.post("/add", async (req, res) => {
   if (req.body.text) {
-    const todo = await createTodo(req.body.text);
-    res.render("todo", { todo: todo });
+    const todo = await Todo.create({ text: req.body.text, isComplete: false });
+    res.render("todoFinal", { todo: todo });
   } else {
-    res.status(204).send('');
+    res.send("");
   }
 });
 
 router.put("/toggle/:id", async (req, res) => {
-  const todo = await toggleTodo(req.params.id);
-  res.render("todo", { todo: todo });
+  const todo = await Todo.findById(req.params.id);
+  todo.isComplete = !todo.isComplete;
+  await todo.save();
+  res.render("todoFinal", { todo: todo });
 });
 
 router.get("/edit-text/:id", async (req, res) => {
-  const todo = await getTodo(req.params.id);
-  res.render("edit", { todo: todo });
+  const todo = await Todo.findById(req.params.id);
+  res.render("editFinal", { todo: todo });
 });
 
 router.put("/update-text/:id", async (req, res) => {
-  const todo = await updateText(req.params.id, req.body.text);
-  res.render("todo", { todo: todo });
+  const todo = await Todo.findByIdAndUpdate(
+    req.params.id,
+    { text: req.body.text },
+    { new: true }
+  );
+
+  res.render("todoFinal", { todo: todo });
 });
 
 router.delete("/delete/:id", async (req, res) => {
-  await deleteTodo(req.params.id);
+  await Todo.findByIdAndDelete(req.params.id);
   res.send(""); // replace with nothing
 });
 
