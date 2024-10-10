@@ -1,0 +1,19 @@
+{
+  "name": "htmx-lesson",
+  "version": "1.0.0",
+  "description": "### Step 1: Initialize the Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.0",
+    "morgan": "^1.10.0"
+  }
+}
