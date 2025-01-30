@@ -1,6 +1,6 @@
 # HTMX
 
-Today, we'll be learning about HTMX, a library that allows you to add dynamic behavior to your website without writing any JavaScript. HTMX is a small library that allows you to send requests from the browser to the server and replace only part of user's interface. It's a great way to add a more app-like experience to your website without writing any additional JavaScript.
+Today, we'll be learning about HTMX, a library that allows you to add dynamic behavior to your website without writing any JavaScript. HTMX is a small library that allows you to send requests from the browser to the server and replace only part of a user's interface. It's a great way to add a more app-like experience to your website without writing any additional JavaScript.
 
 ### What We're Building
 
