@@ -1,188 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Todo List</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-
-    .todo-item {
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .completed {
-      text-decoration: line-through;
-      color: gray;
-    }
-
-    button {
-      margin-left: 10px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Todo List</h1>
-  <form id="add-form">
-    <input type="text" id="new-todo-text" placeholder="New todo">
-    <button type="submit">Add Todo</button>
-  </form>
-  <ul id="todo-list"></ul>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const todoList = document.querySelector('#todo-list');
-      const addForm = document.querySelector('#add-form');
-
-      // Fetch initial todos from the server
-      async function fetchInitialTodos() {
-        try {
-          const response = await fetch('/todos');
-          const todos = await response.json();
-          todos.forEach(addTodoToList);
-        } catch (error) {
-          console.error('Error fetching todos:', error);
-        }
+  <head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+    <style>
+      body {
+	  font-family: Arial, sans-serif;
       }
 
-      // Add new todo
-      addForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const newText = document.querySelector('#new-todo-text').value;
-        try {
-          const response = await fetch('/add', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({ text: newText })
-          });
-
-          const todo = await response.json();
-          addTodoToList(todo);
-        } catch (error) {
-          console.error('Error adding todo:', error);
-        }
-      });
-
-      function addTodoToList(todo) {
-        const todoItem = document.createElement('li');
-        todoItem.id = `todo-container-${todo._id}`;
-        todoItem.className = `todo-item ${todo.isComplete ? 'completed' : ''}`;
-        
-        const todoText = document.createElement('span');
-        todoText.textContent = todo.text;
-        todoText.onclick = () => toggleTodoStatus(todo._id, todo.isComplete);
-        todoItem.appendChild(todoText);
-
-	const buttonsContainer = document.createElement('div');
-	todoItem.appendChild(buttonsContainer);
-
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.onclick = () => editTodoText(todo._id);
-        buttonsContainer.appendChild(editButton);
-
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.onclick = () => deleteTodoItem(todo._id);
-        buttonsContainer.appendChild(deleteButton);
-
-        todoList.appendChild(todoItem);
+      .todo-item {
+	  margin: 10px 0;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
       }
 
-      async function toggleTodoStatus(todoId, currentStatus) {
-        try {
-          const response = await fetch(`/toggle/${todoId}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({ isComplete: !currentStatus })
-          });
-
-          const updatedTodo = await response.json();
-          const todoItem = document.querySelector(`#todo-container-${todoId}`);
-          todoItem.classList.toggle('completed', updatedTodo.isComplete);
-        } catch (error) {
-          console.error('Error toggling todo status:', error);
-        }
+      .completed {
+	  text-decoration: line-through;
+	  color: gray;
       }
 
-      async function deleteTodoItem(todoId) {
-        try {
-          await fetch(`/delete/${todoId}`, {
-            method: 'DELETE'
-          });
-
-          const todoItem = document.querySelector(`#todo-container-${todoId}`);
-          todoItem.remove();
-        } catch (error) {
-          console.error('Error deleting todo:', error);
-        }
+      button {
+	  margin-left: 10px;
       }
+    </style>
+  </head>
+  <body>
+    <h1>Todo List</h1>
+    <form id="add-form">
+      <input type="text" id="new-todo-text" placeholder="New todo">
+      <button type="submit">Add Todo</button>
+    </form>
+    <ul id="todo-list"></ul>
 
-      async function editTodoText(todoId) {
-        const todoItem = document.querySelector(`#todo-container-${todoId}`);
-        const currentText = todoItem.querySelector('span').textContent;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = currentText;
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+	const todoList = document.querySelector('#todo-list');
+	const addForm = document.querySelector('#add-form');
 
-        const saveButton = document.createElement('button');
-        saveButton.textContent = 'Save';
-        saveButton.onclick = async () => await saveTodoText(todoId, input.value);
+	// Fetch initial todos from the server
+	async function fetchInitialTodos() {
+          try {
+            const response = await fetch('/todos');
+            const todos = await response.json();
+            todos.forEach(addTodoToList);
+          } catch (error) {
+            console.error('Error fetching todos:', error);
+          }
+	}
 
-        todoItem.innerHTML = '';
-        todoItem.appendChild(input);
-        todoItem.appendChild(saveButton);
-      }
+	// Add new todo
+	addForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const newText = document.querySelector('#new-todo-text').value;
+          try {
+            const response = await fetch('/add', {
+              method: 'POST',
+              headers: {
+		'Content-Type': 'application/json'
+              },
 
-      async function saveTodoText(todoId, newText) {
-        try {
-          const response = await fetch(`/update-text/${todoId}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+              body: JSON.stringify({ text: newText })
+            });
 
-            body: JSON.stringify({ text: newText })
-          });
+            const todo = await response.json();
+            addTodoToList(todo);
+          } catch (error) {
+            console.error('Error adding todo:', error);
+          }
+	});
 
-          const updatedTodo = await response.json();
-          const todoItem = document.querySelector(`#todo-container-${todoId}`);
-          todoItem.innerHTML = '';
-
+	function addTodoToList(todo) {
+          const todoItem = document.createElement('li');
+          todoItem.id = `todo-container-${todo._id}`;
+          todoItem.className = `todo-item ${todo.isComplete ? 'completed' : ''}`;
+          
           const todoText = document.createElement('span');
-          todoText.textContent = updatedTodo.text;
-          todoText.onclick = () => toggleTodoStatus(updatedTodo._id, updatedTodo.isComplete);
+          todoText.textContent = todo.text;
+          todoText.onclick = () => toggleTodoStatus(todo._id, todo.isComplete);
           todoItem.appendChild(todoText);
 
 	  const buttonsContainer = document.createElement('div');
 	  todoItem.appendChild(buttonsContainer);
 
-	  const editButton = document.createElement('button');
-	  editButton.textContent = 'Edit';
-          editButton.onclick = () => editTodoText(updatedTodo._id);
-	  buttonsContainer.appendChild(editButton);
+          const editButton = document.createElement('button');
+          editButton.textContent = 'Edit';
+          editButton.onclick = () => editTodoText(todo._id);
+          buttonsContainer.appendChild(editButton);
 
-	  const deleteButton = document.createElement('button');
-	  deleteButton.textContent = 'Delete';
-          deleteButton.onclick = () => deleteTodoItem(updatedTodo._id);
-	  buttonsContainer.appendChild(deleteButton);
-        } catch (error) {
-          console.error('Error saving todo text:', error);
-        }
-      }
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.onclick = () => deleteTodoItem(todo._id);
+          buttonsContainer.appendChild(deleteButton);
 
-      fetchInitialTodos();
-    });
-  </script>
-</body>
+          todoList.appendChild(todoItem);
+	}
+
+	async function toggleTodoStatus(todoId, currentStatus) {
+          try {
+            const response = await fetch(`/toggle/${todoId}`, {
+              method: 'PATCH',
+              headers: {
+		'Content-Type': 'application/json'
+              },
+
+              body: JSON.stringify({ isComplete: !currentStatus })
+            });
+
+            const updatedTodo = await response.json();
+            const todoItem = document.querySelector(`#todo-container-${todoId}`);
+            todoItem.classList.toggle('completed', updatedTodo.isComplete);
+          } catch (error) {
+            console.error('Error toggling todo status:', error);
+          }
+	}
+
+	async function deleteTodoItem(todoId) {
+          try {
+            await fetch(`/delete/${todoId}`, {
+              method: 'DELETE'
+            });
+
+            const todoItem = document.querySelector(`#todo-container-${todoId}`);
+            todoItem.remove();
+          } catch (error) {
+            console.error('Error deleting todo:', error);
+          }
+	}
+
+	async function editTodoText(todoId) {
+          const todoItem = document.querySelector(`#todo-container-${todoId}`);
+          const currentText = todoItem.querySelector('span').textContent;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = currentText;
+
+          const saveButton = document.createElement('button');
+          saveButton.textContent = 'Save';
+          saveButton.onclick = async () => await saveTodoText(todoId, input.value);
+
+          todoItem.innerHTML = '';
+          todoItem.appendChild(input);
+          todoItem.appendChild(saveButton);
+	}
+
+	async function saveTodoText(todoId, newText) {
+          try {
+            const response = await fetch(`/update-text/${todoId}`, {
+              method: 'PATCH',
+              headers: {
+		'Content-Type': 'application/json'
+              },
+
+              body: JSON.stringify({ text: newText })
+            });
+
+            const updatedTodo = await response.json();
+            const todoItem = document.querySelector(`#todo-container-${todoId}`);
+            todoItem.innerHTML = '';
+
+            const todoText = document.createElement('span');
+            todoText.textContent = updatedTodo.text;
+            todoText.onclick = () => toggleTodoStatus(updatedTodo._id, updatedTodo.isComplete);
+            todoItem.appendChild(todoText);
+
+	    const buttonsContainer = document.createElement('div');
+	    todoItem.appendChild(buttonsContainer);
+
+	    const editButton = document.createElement('button');
+	    editButton.textContent = 'Edit';
+            editButton.onclick = () => editTodoText(updatedTodo._id);
+	    buttonsContainer.appendChild(editButton);
+
+	    const deleteButton = document.createElement('button');
+	    deleteButton.textContent = 'Delete';
+            deleteButton.onclick = () => deleteTodoItem(updatedTodo._id);
+	    buttonsContainer.appendChild(deleteButton);
+          } catch (error) {
+            console.error('Error saving todo text:', error);
+          }
+	}
+
+	fetchInitialTodos();
+      });
+    </script>
+  </body>
 </html>
